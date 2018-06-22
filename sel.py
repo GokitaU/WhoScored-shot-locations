@@ -5,6 +5,11 @@ from selenium.webdriver.chrome.options import Options
 import pyautogui
 import time
 import cv2
+import pandas as pd
+
+
+xFinal = []
+yFinal = []
 
 def getCoord(path):
     image = cv2.imread(path)
@@ -34,8 +39,6 @@ def getCoord(path):
     xList[len(xList)-1] = 1000
     xPoints = []
     yPoints = []
-    xFinal = []
-    yFinal = []
     for i in range (1, len(xList)):
         #print(xList[i], xList[i-1])
         diff = xList[i]-xList[i-1]
@@ -58,39 +61,63 @@ def getCoord(path):
     print(xFinal)
     print(yFinal)
 
+
+def fromLink(driver, link):    
+    driver.get(link)
+    driver.maximize_window()
+    driver.execute_script("window.scrollTo(0, 1000)") 
+    driver.find_element_by_link_text("Chalkboard").click()
+
+    content = driver.find_element_by_xpath('//*[@id="chalkboard-stadium"]/div[3]/ul/div[9]/input').click()
+
+    time.sleep(10)
+
+    pic = pyautogui.screenshot()
+    pic.save('ShotMap.png')
+
+    im = cv2.imread('ShotMap.png')
+    crop = im[230:598, 344:1011]
+    cv2.imwrite('Out.png', crop)
+
+    getCoord('Out.png')
+    
+
+def getLinks(driver):
+    driver.get("https://www.whoscored.com/Players/137015/Fixtures/James-Maddison")
+    
+    links = []
+    for i in range(1, 50):
+        link = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[4]/a')
+        competition = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[1]/span/a')
+        away_team = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[5]/a')
+        
+        if (competition.get_attribute('text') != "EFLC" and away_team.get_attribute('text') == "Norwich"):
+            links.append(link.get_attribute('href'))
+
+    return links
+
     
     
+
+    
+if __name__ == "__main__":
+
+    chop = webdriver.ChromeOptions()
+    chop.add_extension('AdBlock_v3.31.2.crx')
+    driver = webdriver.Chrome('chromedriver.exe')
+
+    links = getLinks(driver)
+
+    for URL in links:
+        fromLink(driver, URL)
+
     
 
 
+    pd.DataFrame(xFinal).T.to_csv('xPoints.csv', index=False, header=None)
+    pd.DataFrame(yFinal).T.to_csv('yPoints.csv', index=False, header=None)
 
 
+    #driver.close()
 
-
-
-
-chop = webdriver.ChromeOptions()
-chop.add_extension('AdBlock_v3.31.2.crx')
-
-driver = webdriver.Chrome('chromedriver.exe')
-driver.get("https://www.whoscored.com/Matches/1193314/Live/England-Championship-2017-2018-Wolverhampton-Wanderers-Norwich")
-
-
-driver.maximize_window()
-driver.execute_script("window.scrollTo(0, 1000)") 
-driver.find_element_by_link_text("Chalkboard").click()
-content = driver.find_element_by_xpath('//*[@id="chalkboard-stadium"]/div[3]/ul/div[9]/input').click()
-
-time.sleep(10)
-
-pic = pyautogui.screenshot()
-pic.save('ShotMap.png')
-
-im = cv2.imread('ShotMap.png')
-crop = im[230:598, 344:1011]
-cv2.imwrite('Out.png', crop)
-
-getCoord('Out.png')
-
-
-#driver.close()
+    
