@@ -115,7 +115,7 @@ def getCoordHome(path):
     for i in range(row):
         for j in range(col):
             k = image[i][j]
-            if k[0]==224 and k[1]==139:
+            if k[0]==20 and k[1]==91:
                 flag = 1
                 pos = (i, j)
                 print(pos)
@@ -174,7 +174,9 @@ def getCoordHome(path):
             avg = (xsum/len(shot[i]), ysum/len(shot[i]))
             CSV.append(avg)
             final.append(avg)
-            print(final)        
+                    
+    print(final)
+    
     # print(xFinal)
     # print(yFinal)
     
@@ -240,7 +242,7 @@ def getLinks(driver):
         link = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[4]/a')
         competition = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[1]/span/a')
         away_team = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[5]/a')
-        mins_played = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[8]')
+        #mins_played = driver.find_element_by_xpath('//*[@id="player-fixture"]/tbody/tr[' + str(i) + ']/td[8]')
 
         # dur = (mins_played.get_attribute('text'))
         # print(dur)
@@ -266,11 +268,11 @@ if __name__ == "__main__":
 
     away_links, home_links = getLinks(driver)
 
-    # for URL in away_links:
-    #      fromLink_away(driver, URL)
+    for URL in away_links:
+        fromLink_away(driver, URL)
 
     for URL in home_links:
-         fromLink_home(driver, URL)
+        fromLink_home(driver, URL)
 
     pd.DataFrame(CSV).T.to_csv('shots.csv', index=False, header=None)
 
