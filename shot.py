@@ -8,10 +8,44 @@ import cv2
 import pandas as pd
 
 
+
+#Global data structure declaration.
+
 xFinal = []
 yFinal = []
 CSV = []
 
+
+
+#Option declaration
+Options = {
+    "Goals" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[2]/label', "Scroll" : -148},
+    "On Target" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[3]/label', "Scroll" : -175},
+    "Off Target" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[4]/label', "Scroll" : -200},
+    "Woodwork" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[5]/label', "Scroll" : -225},
+    "Blocked" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[6]/label', "Scroll" : -255},
+    "6 Yard Box" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[2]/label', "Scroll" : -148},
+    "Penalty Area" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[3]/label', "Scroll" : -175},
+    "Outside Box" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[4]/label', "Scroll" : -200},
+    "Open Play" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[2]/label', "Scroll" : -148},
+    "Fastbreak" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[3]/label', "Scroll" : -175},
+    "Set Pieces" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[4]/label', "Scroll" : -200},
+    "Penalty" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[5]/label', "Scroll" : -225},
+    "Right foot" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[2]/label', "Scroll" : -148},
+    "Left foot" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[3]/label', "Scroll" : -175},
+    "Head" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[4]/label', "Scroll" : -200}
+}
+
+
+def check_options():
+    for option in Options.keys():
+        if Options[option]["True"] == 1:
+            driver.find_element_by_xpath(str(Options[option]["XPath"])).click()
+            time.sleep(5)
+            driver.execute_script("window.scrollBy(0, " + str(Options[option]["Scroll"]) + ")")
+            time.sleep(3)
+            
+    
 
 def check (x, y, Dict):
     for i in Dict.keys():
@@ -67,7 +101,7 @@ def getCoordAway(path):
             xPoints.append(sort[i-1][0])
             yPoints.append(sort[i-1][1])
             shot[shot_count].append((sort[i-1][0], sort[i-1][1]))
-            print(shot)
+            # print(shot)
         
         else: 
             shot[shot_count].append((sort[i-1][0], sort[i-1][1]))
@@ -80,7 +114,7 @@ def getCoordAway(path):
             # yFinal.append(sum(yPoints)/len(xPoints))
             # xPoints = []
             # yPoints = []
-            print(shot)
+            # print(shot)
 
 
 
@@ -145,7 +179,7 @@ def getCoordHome(path):
             xPoints.append(sort[i-1][0])
             yPoints.append(sort[i-1][1])
             shot[shot_count].append((sort[i-1][0], sort[i-1][1]))
-            print(shot)
+            #print(shot)
         
         else: 
             shot[shot_count].append((sort[i-1][0], sort[i-1][1]))
@@ -158,7 +192,7 @@ def getCoordHome(path):
             # yFinal.append(sum(yPoints)/len(xPoints))
             # xPoints = []
             # yPoints = []
-            print(shot)
+            #print(shot)
 
 
 
@@ -194,7 +228,9 @@ def fromLink_away(driver, link):
             break
 
     content = driver.find_element_by_xpath('//*[@id="chalkboard-stadium"]/div[3]/ul/div[' + str(pos) + ']/input').click()
-
+    
+    
+    check_options() 
     time.sleep(10)
 
     pic = pyautogui.screenshot()
@@ -220,6 +256,7 @@ def fromLink_home(driver, link):
 
     content = driver.find_element_by_xpath('//*[@id="chalkboard-stadium"]/div[1]/ul/div[' + str(pos) + ']/input').click()
 
+    check_options()
     time.sleep(10)
 
     pic = pyautogui.screenshot()
@@ -256,10 +293,17 @@ def getLinks(driver):
 
     return away_links, home_links
 
-    
-    
+def Shot_Locations (driver, away_links, home_links):
+    for URL in away_links:
+        fromLink_away(driver, URL)
 
-    
+    for URL in home_links:
+        fromLink_home(driver, URL)
+
+
+
+
+
 if __name__ == "__main__":
 
     chop = webdriver.ChromeOptions()
@@ -267,20 +311,11 @@ if __name__ == "__main__":
     driver = webdriver.Chrome('chromedriver.exe')
 
     away_links, home_links = getLinks(driver)
+    Shot_Locations(driver, away_links, home_links)
 
-    for URL in away_links:
-        fromLink_away(driver, URL)
-
-    for URL in home_links:
-        fromLink_home(driver, URL)
 
     pd.DataFrame(CSV).T.to_csv('shots.csv', index=False, header=None)
-
-
-    # pd.DataFrame(xFinal).T.to_csv('xPoints.csv', index=False, header=None)
-    # pd.DataFrame(yFinal).T.to_csv('yPoints.csv', index=False, header=None)
-
-
-    #driver.close()
+    time.sleep(10)
+    driver.close()
 
     
