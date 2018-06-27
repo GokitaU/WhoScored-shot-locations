@@ -19,21 +19,21 @@ CSV = []
 
 #Option declaration
 Options = {
-    "Goals" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[2]/label', "Scroll" : -148},
-    "On Target" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[3]/label', "Scroll" : -175},
-    "Off Target" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[4]/label', "Scroll" : -200},
-    "Woodwork" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[5]/label', "Scroll" : -225},
+    "Goals" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[2]/label', "Scroll" : -148},
+    "On Target" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[3]/label', "Scroll" : -175},
+    "Off Target" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[4]/label', "Scroll" : -200},
+    "Woodwork" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[5]/label', "Scroll" : -225},
     "Blocked" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[2]/div[6]/label', "Scroll" : -255},
-    "6 Yard Box" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[2]/label', "Scroll" : -148},
-    "Penalty Area" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[3]/label', "Scroll" : -175},
-    "Outside Box" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[4]/label', "Scroll" : -200},
-    "Open Play" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[2]/label', "Scroll" : -148},
-    "Fastbreak" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[3]/label', "Scroll" : -175},
-    "Set Pieces" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[4]/label', "Scroll" : -200},
-    "Penalty" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[5]/label', "Scroll" : -225},
-    "Right foot" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[2]/label', "Scroll" : -148},
-    "Left foot" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[3]/label', "Scroll" : -175},
-    "Head" : {"True" : 1, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[4]/label', "Scroll" : -200}
+    "6 Yard Box" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[2]/label', "Scroll" : -148},
+    "Penalty Area" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[3]/label', "Scroll" : -175},
+    "Outside Box" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[3]/div[4]/label', "Scroll" : -200},
+    "Open Play" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[2]/label', "Scroll" : -148},
+    "Fastbreak" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[3]/label', "Scroll" : -175},
+    "Set Pieces" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[4]/label', "Scroll" : -200},
+    "Penalty" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[4]/div[5]/label', "Scroll" : -225},
+    "Right foot" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[2]/label', "Scroll" : -148},
+    "Left foot" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[3]/label', "Scroll" : -175},
+    "Head" : {"True" : 0, "XPath" : '//*[@id="chalkboard"]/div[2]/div[1]/div[5]/div[4]/label', "Scroll" : -200}
 }
 
 
@@ -41,9 +41,9 @@ def check_options():
     for option in Options.keys():
         if Options[option]["True"] == 1:
             driver.find_element_by_xpath(str(Options[option]["XPath"])).click()
-            time.sleep(5)
+            time.sleep(2)
             driver.execute_script("window.scrollBy(0, " + str(Options[option]["Scroll"]) + ")")
-            time.sleep(3)
+            time.sleep(2)
             
     
 
@@ -205,7 +205,7 @@ def getCoordHome(path):
             for j in shot[i]:
                 xsum = xsum + j[0]
                 ysum = ysum + j[1]
-            avg = (xsum/len(shot[i]), ysum/len(shot[i]))
+            avg = (367 - xsum/len(shot[i]), 666 - ysum/len(shot[i]))
             CSV.append(avg)
             final.append(avg)
                     
@@ -231,7 +231,7 @@ def fromLink_away(driver, link):
     
     
     check_options() 
-    time.sleep(10)
+    time.sleep(5)
 
     pic = pyautogui.screenshot()
     pic.save('ShotMap.png')
