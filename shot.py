@@ -74,23 +74,21 @@ def getCoord(path, home_flag):
                 k = image[i][j]
                 if k[0] == 20 and k[1] == 91:
                     flag = 1
-                    pos = (i, j)
-                    xList.append(pos)
-                    yList.append(pos[1])
+                    xyList.append((367 - i, 666 - j))
                     count += 1
 
     if (flag == 0):
         return
 
-    xList[len(xList) - 1] = (1000, 1000)
-    sort = sorted(xList, key = lambda k: [k[1], k[0]])
+    xyList[len(xyList) - 1] = (1000, 1000)
+    sort = sorted(xyList, key = lambda k: [k[1], k[0]])
     xPoints = yPoints = []
     shot = {}
     shot_count = 0
     shot[shot_count] = []
     final = []
 
-    for i in range (1, len(xList)):
+    for i in range (1, len(xyList)):
         if ((abs(sort[i][0] - sort[i - 1][0]) < 10) and (abs(sort[i][1] - sort[i - 1][1]) < 10)):
             xPoints.append(sort[i - 1][0])
             yPoints.append(sort[i - 1][1])
@@ -196,8 +194,8 @@ def getLinks(driver):
 
 
 def Shot_Locations (driver, away_links, home_links):
-    for URL in away_links:
-        fromLink_away(driver, URL)
+    # for URL in away_links:
+    #     fromLink_away(driver, URL)
 
     for URL in home_links:
         fromLink_home(driver, URL)
